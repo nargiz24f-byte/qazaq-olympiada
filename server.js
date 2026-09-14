@@ -31,6 +31,37 @@ app.post("/api/teacher-login", (req,res)=>{
 app.get("/api/submissions", (req,res)=>{
   res.json(readSubs());
 });
+let dayAccess = {
+  monday: false,
+  tuesday: false,
+  wednesday: false,
+  thursday: false,
+  friday: false,
+  saturday: false
+};
+app.get("/api/day-access", (req, res) => {
+  res.json(dayAccess);
+});
+app.post("/api/day-access", (req, res) => {
+  const password = String(req.body?.password || "");
+  const day = String(req.body?.day || "");
+  const open = req.body?.open === true;
+
+  if (password !== TEACHER_PASSWORD) {
+    return res.status(401).json({ error: "Құпиясөз қате" });
+  }
+
+  if (!(day in dayAccess)) {
+    return res.status(400).json({ error: "Күн дұрыс таңдалмаған" });
+  }
+
+  dayAccess[day] = open;
+  res.json({ ok: true, dayAccess });
+});
+
+
+
+
 
 app.post("/api/submissions", (req,res)=>{
   const sub=req.body || {};
