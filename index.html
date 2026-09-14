@@ -289,7 +289,7 @@ function clearWork(wi){
   saveData(d); renderDay(); updateProgress();
 }
 
-function submitDay(){
+async function submitDay(){
   const d=getData(), day=PLAN[dayIndex];
   const scores=[];
   const workDetails=[];
