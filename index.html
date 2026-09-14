@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Qazaq Olimpiada — 9-сынып, 1-апта</title>
+<style>
+:root{--green:#164b3b;--green2:#216b54;--bg:#f5f1e8;--card:#fff;--line:#ddd4c1;--gold:#c59b42;--muted:#6b746f;--warn:#fff4d6;--good:#edf7f1;--bad:#fff0ef}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:#18352c}
+header{background:linear-gradient(135deg,var(--green),#0f382d);color:white;padding:22px 16px;position:sticky;top:0;z-index:5}
+.wrap{max-width:1180px;margin:auto}.topline{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+h1{margin:0;font-size:28px}.sub{opacity:.9;margin-top:6px}
+.badge{display:inline-block;padding:5px 9px;border-radius:999px;background:#efe6c9;color:#5e4b20;font-size:12px;font-weight:700}
+main{padding:18px 16px 50px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin:14px 0;box-shadow:0 2px 8px #0000000a}
+.grid{display:grid;grid-template-columns:270px 1fr;gap:16px}.days button{width:100%;text-align:left;margin:6px 0;padding:13px;border:1px solid var(--line);border-radius:12px;background:white;cursor:pointer}
+.days button.active{background:#e8f3ed;border-color:var(--green)}.days small{color:var(--muted)}
+.work{border:1px solid #e6dfcf;border-radius:16px;padding:16px;margin:15px 0;background:#fff}
+.work h3{margin-top:0}.workhead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
+label{display:block;font-weight:700;margin-top:12px}textarea,input{width:100%;padding:11px;border:1px solid #d5cdbd;border-radius:10px;margin-top:6px;font:inherit}textarea{min-height:92px;resize:vertical}
+.btn{border:0;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}.primary{background:var(--green);color:#fff}.secondary{background:#ece7dc;color:#18352c}.outline{background:white;border:1px solid var(--green);color:var(--green)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.feedback{margin-top:12px;padding:13px;border-radius:12px;background:var(--good);line-height:1.5}.feedback.warn{background:var(--warn)}.feedback.bad{background:var(--bad)}
+.scorebox{font-size:22px;font-weight:800}.muted{color:var(--muted)}.hide{display:none}.progress{height:10px;background:#e7e0d2;border-radius:999px;overflow:hidden}.progress>div{height:100%;background:var(--green2);width:0}
+.notice{background:#eef6f1;border-left:4px solid var(--green);padding:12px;border-radius:8px}.ai-note{font-size:13px;color:var(--muted)}
+.integrity{background:#fff4d6;border:1px solid #ead49a;border-radius:10px;padding:10px;margin-top:10px;font-size:13px}
+.teacher table{width:100%;border-collapse:collapse}th,td{padding:9px;border-bottom:1px solid #eee;text-align:left}
+@media(max-width:850px){.grid{grid-template-columns:1fr}header{position:static}}
+</style>
+</head>
+<body>
+<header>
+<div class="wrap topline">
+<div><h1>📚 Qazaq Olimpiada</h1><div class="sub">9-сынып • Қазақ әдебиеті • 1-апта • Дүйсенбі–Сенбі</div></div>
+<div style="display:flex;gap:8px;align-items:center">
+<span class="badge">1-АПТА</span>
+<button class="btn secondary" onclick="openTeacher()">👩‍🏫 Ұстаз кабинеті</button>
+</div>
+</div>
+</header>
+<main class="wrap">
+<div class="card" id="loginBox">
+<h2>Оқушы кабинеті</h2>
+<p class="muted">Аты-жөніңді енгіз. Жауаптар осы браузерде автоматты сақталады.</p>
+<input id="studentName" placeholder="Мысалы: Айдана С.">
+<button class="btn primary" onclick="login()">1-аптаны бастау</button>
+</div>
+
+<div id="app" class="hide">
+<div class="card">
+<div class="topline"><div><h2 id="welcome" style="margin:0"></h2><div class="muted">Барлық жұмысты осы бір файлдың ішінде орындайсың.</div></div>
+<div style="min-width:230px"><div class="muted">Апталық ілгерілеу</div><div class="progress"><div id="progressBar"></div></div><div id="progressText" class="muted" style="margin-top:4px"></div></div></div>
+</div>
+
+<div class="notice">
+<b>Жұмыс тәртібі:</b> алдымен шығарманы оқы → барлық талдау өрістерін өз сөзіңмен толтыр → «ЖИ-дан кері байланыс алу» батырмасын бас → қатеңді түзет → соңында жұмысты мұғалімге жібер.
+<br><b>Академиялық адалдық:</b> басқа сайттан немесе дайын жұмыстан мәтінді көшіру/қою (paste), сүйреп әкелу (drop) бұғатталған. Әрекет саны журналға тіркеледі.
+</div>
+
+<div class="grid">
+<aside class="card">
+<h3>1-апта</h3>
+<div id="days" class="days"></div>
+</aside>
+<section class="card">
+<span id="dayBadge" class="badge"></span>
+<h2 id="dayTitle"></h2>
+<div id="works"></div>
+<div class="actions">
+<button class="btn primary" onclick="submitDay()">📤 Мұғалімге жіберу</button>
+</div>
+<div id="dayMessage"></div>
+</section>
+</div>
+
+<section class="card teacher" id="teacherCabinet">
+<div class="topline">
+  <div><h2>👩‍🏫 Ұстаз кабинеті</h2>
+  <p class="muted">Оқушылардың апта, күн, тапсырма, бағалау және жіберу уақытын бақылау.</p></div>
+  <button class="btn outline" onclick="renderTeacher()">Жаңарту</button>
+</div>
+<div class="grid" style="grid-template-columns:repeat(3,1fr);margin:12px 0">
+ <div class="feedback"><b id="tStudents">0</b><br><span class="muted">оқушы</span></div>
+ <div class="feedback"><b id="tSubmissions">0</b><br><span class="muted">жіберілген күндік жұмыс</span></div>
+ <div class="feedback"><b id="tAverage">—</b><br><span class="muted">орташа баға</span></div>
+</div>
+<div style="overflow:auto">
+<table><thead><tr><th>Оқушы</th><th>Апта</th><th>Күн</th><th>Орындалған тақырып</th><th>Бағалар</th><th>Орташа</th><th>Жіберілген уақыт</th><th>Адалдық журналы</th><th>Толық жұмыс</th></tr></thead>
+<tbody id="teacherRows"></tbody></table>
+</div>
+<div id="teacherDetail"></div>
+</section>
+</div>
+</main>
+
+<script>
+const PLAN = [{"day": "Дүйсенбі", "works": [{"title": "Жүсіп Баласағұн — «Құтты білік»", "kind": "дастан/дидактикалық шығарма"}, {"title": "Шешендік өнер", "kind": "теориялық бөлім"}, {"title": "Майқы би — шешендік сөздер", "kind": "шешендік сөз"}, {"title": "Мөңке би — «Төрт тентек»", "kind": "шешендік сөз"}, {"title": "Әнет баба — «Не арсыз, не ғайып, не даусыз?»", "kind": "шешендік сөз"}]}, {"day": "Сейсенбі", "works": [{"title": "Төле би — «Ердің бақыты — әйел»", "kind": "шешендік сөз"}, {"title": "Қазыбек би — «Кім жақын, не қымбат, не қиын?»", "kind": "шешендік сөз"}]}, {"day": "Сәрсенбі", "works": [{"title": "Әйтеке би — «Қасқакөл дауы»", "kind": "шешендік сөз"}, {"title": "Сырым Датұлы — «Бала би мен Сырым»", "kind": "шешендік сөз"}]}, {"day": "Бейсенбі", "works": [{"title": "Бұқар жырау — «Тілек»", "kind": "толғау"}, {"title": "Бұқар жырау — «Ай, Абылай, Абылай»", "kind": "толғау"}, {"title": "Бұқар жырау — «Асқар таудың өлгені»", "kind": "толғау"}, {"title": "Айтыс — әдеби жанр ретінде", "kind": "теориялық бөлім"}, {"title": "«Біржан мен Сара» айтысы", "kind": "айтыс"}]}, {"day": "Жұма", "works": [{"title": "Нысанбай жырау — «Кенесары–Наурызбай» дастаны", "kind": "тарихи дастан"}, {"title": "Махамбет Өтемісұлы — «Махамбеттің Баймағамбет сұлтанға айтқаны»", "kind": "өлең"}, {"title": "Махамбет Өтемісұлы — «Бағаналы терек»", "kind": "өлең"}, {"title": "Махамбет Өтемісұлы — «Мен, мен едім, мен едім»", "kind": "өлең"}]}, {"day": "Сенбі", "works": [{"title": "Шоқан Уәлиханов — «Ыстықкөл сапарының күнделігі»", "kind": "күнделік/сапарнама"}, {"title": "Ілияс Жансүгіров — «Құлагер» поэмасы", "kind": "поэма"}]}];
+const FIELDS = [{"key": "author", "label": "Авторы", "help": "Жазушының, ақынның немесе шешеннің аты-жөні."}, {"key": "topic", "label": "Шығарманың тақырыбы", "help": "Туындыда суреттелген негізгі өмір шындығы мен оқиға ауқымын анықта."}, {"key": "idea", "label": "Шығарманың идеясы", "help": "Автордың түпкі ойы, мақсаты және көтерген басты мәселесін түсіндір."}, {"key": "genre", "label": "Жанры мен түрі", "help": "Жанрын атап, неге сол жанрға жататынын дәлелде."}, {"key": "composition", "label": "Композициялық құрылысы / ойдың дамуы", "help": "Сюжетті шығарма болса: басталуы, байланысуы, шиеленісуі, шарықтау шегі, шешімі. Лирикалық/шешендік мәтінде: ойдың басталуы, дамуы, түйіні."}, {"key": "images", "label": "Образдар жүйесі / негізгі тұлғалар", "help": "Басты және қосалқы тұлғаларды, олардың мінезі, іс-әрекеті, қоғамдағы орнын талда."}, {"key": "speech", "label": "Кейіпкерлердің тілі / авторлық тіл", "help": "Диалог, монолог, шешендік тәсіл, сөз саптау, стиль ерекшелігін сипатта."}, {"key": "devices", "label": "Көркемдік тәсілдер", "help": "Эпитет, теңеу, метафора, қайталау, риторикалық сұрақ, параллелизм т.б. тәсілдерді нақты мысалмен көрсет."}, {"key": "problem", "label": "Көтерген проблемасы", "help": "Заман, қоғам, ел, адамгершілік, ерлік, білім, әділет сияқты мәселелерді анықта."}, {"key": "context", "label": "Тарихи-әлеуметтік контекст", "help": "Шығарманың дәуірмен, тарихи оқиғамен немесе қоғамдық ортамен байланысын түсіндір."}, {"key": "value", "label": "Тәрбиелік және эстетикалық мәні", "help": "Оқырманға берер өнегесі мен көркемдік маңызын бағала."}, {"key": "conclusion", "label": "Түйін / жеке бағам", "help": "Өз қорытындыңды 3–5 сөйлеммен жаз. Кемінде бір нақты дәлел келтір."}];
+let userName = '';
+let dayIndex = 0;
+
+function storeKey(){ return 'qo9_week1_' + userName; }
+function getData(){
+  const d=JSON.parse(localStorage.getItem(storeKey()) || '{"answers":{},"reviews":{},"doneDays":[],"integrity":{"pasteAttempts":0,"dropAttempts":0}}');
+  d.integrity=d.integrity||{pasteAttempts:0,dropAttempts:0};
+  return d;
+}
+function saveData(d){ localStorage.setItem(storeKey(), JSON.stringify(d)); }
+
+function login(){
+  const n=document.getElementById('studentName').value.trim();
+  if(!n){ alert('Аты-жөніңді енгіз.'); return; }
+  userName=n; localStorage.setItem('qo9_week1_user',n);
+  document.getElementById('loginBox').classList.add('hide');
+  document.getElementById('app').classList.remove('hide');
+  document.getElementById('welcome').textContent = n + ' • 9-сынып';
+  renderDays(); renderDay(); renderTeacher(); updateProgress();
+}
+
+function renderDays(){
+  const d=getData();
+  document.getElementById('days').innerHTML = PLAN.map((x,i)=>{
+    const done=d.doneDays.includes(i);
+    return `<button class="${i===dayIndex?'active':''}" onclick="openDay(${i})"><b>${x.day}</b><br><small>${x.works.length} тақырып</small>${done?'<br>✅ Аяқталды':''}</button>`;
+  }).join('');
+}
+function openDay(i){dayIndex=i;renderDays();renderDay();}
+
+function answerId(di,wi,key){ return `d${di}_w${wi}_${key}`; }
+
+function renderDay(){
+  const d=getData(), day=PLAN[dayIndex];
+  document.getElementById('dayBadge').textContent=day.day;
+  document.getElementById('dayTitle').textContent=day.day+' — '+day.works.length+' тақырып';
+  document.getElementById('works').innerHTML = day.works.map((w,wi)=>{
+    const review=(d.reviews[dayIndex]||{})[wi];
+    return `<article class="work">
+      <div class="workhead"><div><h3>${wi+1}. ${w.title}</h3><span class="badge">${w.kind}</span></div>${review?`<div class="scorebox">${review.score}/10</div>`:''}</div>
+      <p class="muted">Шығарманы оқып болған соң әр тармақты толық, дәлелмен және өз сөзіңмен толтыр.</p>
+      ${FIELDS.map(f=>{
+        const val=((((d.answers[dayIndex]||{})[wi]||{})[f.key])||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        return `<label>${f.label}</label><div class="muted">${f.help}</div><textarea id="${answerId(dayIndex,wi,f.key)}" data-work="${wi}" data-field="${f.key}" onpaste="blockPaste(event)" ondrop="blockDrop(event)" onbeforeinput="blockInsert(event)" oninput="saveAnswer(${wi},'${f.key}',this.value)">${val}</textarea>`;
+      }).join('')}
+      <div class="actions">
+        <button class="btn outline" onclick="getAIFeedback(${wi})">🤖 ЖИ-дан кері байланыс алу</button>
+        <button class="btn secondary" onclick="clearWork(${wi})">Тазарту</button>
+      </div>
+      <div class="ai-note">Бағалау өлшемдері: толықтық, дәлдік, дәлел, әдеби терминдерді қолдану, тіл сауаттылығы. Баға 1–10.</div>
+      <div class="integrity" id="integrity_${wi}">🛡️ Көшіру арқылы қою бұғатталған.</div>
+      <div id="review_${wi}">${review?renderReview(review):''}</div>
+    </article>`;
+  }).join('');
+}
+
+
+function recordIntegrity(type, wi){
+  const d=getData();
+  d.integrity=d.integrity||{pasteAttempts:0,dropAttempts:0};
+  if(type==='paste') d.integrity.pasteAttempts=(d.integrity.pasteAttempts||0)+1;
+  if(type==='drop') d.integrity.dropAttempts=(d.integrity.dropAttempts||0)+1;
+  saveData(d);
+  const box=document.getElementById('integrity_'+wi);
+  if(box) box.innerHTML='⚠️ Дайын мәтінді енгізуге болмайды. Әрекет журналға тіркелді. Paste: '+(d.integrity.pasteAttempts||0)+', Drop: '+(d.integrity.dropAttempts||0);
+}
+function blockPaste(e){
+  e.preventDefault();
+  const wi=Number(e.currentTarget.dataset.work||0);
+  recordIntegrity('paste',wi);
+}
+function blockDrop(e){
+  e.preventDefault();
+  const wi=Number(e.currentTarget.dataset.work||0);
+  recordIntegrity('drop',wi);
+}
+function blockInsert(e){
+  if(e.inputType==='insertFromPaste' || e.inputType==='insertFromDrop'){
+    e.preventDefault();
+  }
+}
+
+function saveAnswer(wi,key,val){
+  const d=getData();
+  d.answers[dayIndex]=d.answers[dayIndex]||{};
+  d.answers[dayIndex][wi]=d.answers[dayIndex][wi]||{};
+  d.answers[dayIndex][wi][key]=val;
+  saveData(d); updateProgress();
+}
+
+function collectWork(wi){
+  const d=getData();
+  const ans=((d.answers[dayIndex]||{})[wi])||{};
+  return FIELDS.map(f=>({label:f.label,key:f.key,text:(ans[f.key]||'').trim()}));
+}
+
+function localRubricFeedback(wi){
+  const rows=collectWork(wi);
+  const filled=rows.filter(r=>r.text.length>=20).length;
+  const words=rows.reduce((n,r)=>n+(r.text.match(/[А-Яа-яӘәҒғҚқҢңӨөҰұҮүҺһІіA-Za-z0-9]+/g)||[]).length,0);
+  const evidence=rows.filter(r=>/мысал|дәлел|себебі|мәтінде|шығармада|өлеңде|сөзінде|автор/i.test(r.text)).length;
+  let score=Math.round((filled/FIELDS.length)*6 + Math.min(2,words/350*2) + Math.min(2,evidence/4*2));
+  score=Math.max(1,Math.min(10,score));
+  const missing=rows.filter(r=>r.text.length<20).map(r=>r.label);
+  const short=rows.filter(r=>r.text.length>=20 && r.text.length<60).map(r=>r.label);
+  let strengths=[];
+  if(filled>=10) strengths.push('Талдаудың көп бөлігі толтырылған.');
+  if(words>=250) strengths.push('Жауап көлемі жеткілікті.');
+  if(evidence>=3) strengths.push('Дәлел мен түсіндіру қолданылған.');
+  if(!strengths.length) strengths.push('Жұмыс басталған, бірақ талдауды әлі толықтыру қажет.');
+  let errors=[];
+  if(missing.length) errors.push('Толық емес бөлімдер: '+missing.slice(0,5).join(', ')+(missing.length>5?' т.б.':'')+'.');
+  if(short.length) errors.push('Кейбір жауаптар тым қысқа: '+short.slice(0,4).join(', ')+'.');
+  if(evidence<2) errors.push('Нақты мәтіндік дәлелдер аз. Кемінде 2–3 тұжырымды шығармадан мысалмен бекіт.');
+  if(words<180) errors.push('Жалпы талдау көлемі қысқа. Ойды тереңдетіп, себеп–салдар байланысын көрсет.');
+  if(!errors.length) errors.push('Негізгі қате байқалмады. Терминдердің дәлдігін және орфографияны соңғы рет тексер.');
+  return {
+    score,
+    strengths,
+    errors,
+    advice:[
+      'Тақырып пен идеяны бір-бірінен нақты ажырат.',
+      'Жанрды атаумен шектелмей, белгісін дәлелде.',
+      'Көркемдік тәсілді атағанда оның мәтіндегі қызметін түсіндір.',
+      'Түйінде өз бағамыңды кемінде бір нақты дәлелмен бекіт.'
+    ],
+    mode:'demo'
+  };
+}
+
+async function getAIFeedback(wi){
+  const btnReview=document.getElementById('review_'+wi);
+  const rows=collectWork(wi);
+  const filled=rows.filter(r=>r.text.length>=20).length;
+  if(filled<4){
+    btnReview.innerHTML='<div class="feedback warn"><b>Әлі ерте.</b> Кемінде 4 бөлімді мағыналы түрде толтыр. Содан кейін ЖИ бағалайды.</div>';
+    return;
+  }
+  btnReview.innerHTML='<div class="feedback">ЖИ жұмысты талдап жатыр...</div>';
+  const payload={
+    grade:9,
+    week:1,
+    day:PLAN[dayIndex].day,
+    work:PLAN[dayIndex].works[wi].title,
+    answers:Object.fromEntries(rows.map(r=>[r.label,r.text]))
+  };
+  try{
+    const r=await fetch('/api/literature-feedback',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload)
+    });
+    if(!r.ok) throw new Error('AI endpoint unavailable');
+    const ai=await r.json();
+    const review={
+      score:Math.max(1,Math.min(10,Number(ai.score)||1)),
+      strengths:Array.isArray(ai.strengths)?ai.strengths:[],
+      errors:Array.isArray(ai.errors)?ai.errors:[],
+      advice:Array.isArray(ai.advice)?ai.advice:[],
+      mode:'ai'
+    };
+    saveReview(wi,review);
+  }catch(e){
+    const review=localRubricFeedback(wi);
+    saveReview(wi,review);
+  }
+}
+
+function saveReview(wi,review){
+  const d=getData();
+  d.reviews[dayIndex]=d.reviews[dayIndex]||{};
+  d.reviews[dayIndex][wi]=review;
+  saveData(d);
+  document.getElementById('review_'+wi).innerHTML=renderReview(review);
+  renderDays(); updateProgress();
+}
+
+function renderReview(r){
+  const title=r.mode==='ai'?'ЖИ бағалауы':'Демо бағалау (ЖИ сервері қосылғанша)';
+  return `<div class="feedback">
+    <div class="scorebox">${title}: ${r.score}/10</div>
+    <b>Күшті тұстары:</b><ul>${(r.strengths||[]).map(x=>`<li>${x}</li>`).join('')}</ul>
+    <b>Қателері / толықтыратын тұстары:</b><ul>${(r.errors||[]).map(x=>`<li>${x}</li>`).join('')}</ul>
+    <b>Нақты кеңес:</b><ul>${(r.advice||[]).map(x=>`<li>${x}</li>`).join('')}</ul>
+  </div>`;
+}
+
+function clearWork(wi){
+  if(!confirm('Осы шығарманың жазылған жауаптарын тазартасыз ба?')) return;
+  const d=getData();
+  if(d.answers[dayIndex]) delete d.answers[dayIndex][wi];
+  if(d.reviews[dayIndex]) delete d.reviews[dayIndex][wi];
+  saveData(d); renderDay(); updateProgress();
+}
+
+function submitDay(){
+  const d=getData(), day=PLAN[dayIndex];
+  const scores=[];
+  const workDetails=[];
+  for(let wi=0;wi<day.works.length;wi++){
+    const rv=((d.reviews[dayIndex]||{})[wi]);
+    if(rv) scores.push(Number(rv.score)||0);
+    const answers=((d.answers[dayIndex]||{})[wi])||{};
+    workDetails.push({
+      title:day.works[wi].title,
+      answers:answers,
+      review:rv||null
+    });
+  }
+  if(scores.length<day.works.length){
+    document.getElementById('dayMessage').innerHTML='<div class="feedback warn"><b>Күн әлі аяқталған жоқ.</b> Әр тақырып бойынша талдауды толтырып, ЖИ кері байланысын ал.</div>';
+    return;
+  }
+  if(!d.doneDays.includes(dayIndex)) d.doneDays.push(dayIndex);
+  saveData(d);
+  const avg=(scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(1);
+  const now=new Date();
+  const submission={
+    id:Date.now(),
+    name:userName,
+    grade:9,
+    week:'1-апта',
+    day:day.day,
+    dayIndex,
+    works:workDetails,
+    scores:scores,
+    avg,
+    submittedAt:now.toISOString(),
+    submittedDisplay:now.toLocaleString('kk-KZ'),
+    integrity:{
+      pasteAttempts:(d.integrity&&d.integrity.pasteAttempts)||0,
+      dropAttempts:(d.integrity&&d.integrity.dropAttempts)||0
+    }
+  };
+  try{
+    const r=await fetch('/api/submissions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(submission)
+    });
+    if(!r.ok) throw new Error('server');
+  }catch(e){
+    const subs=JSON.parse(localStorage.getItem('qo9_week1_subs')||'[]');
+    const existing=subs.findIndex(x=>x.name===userName && x.week==='1-апта' && x.day===day.day);
+    if(existing>=0) subs[existing]=submission; else subs.push(submission);
+    localStorage.setItem('qo9_week1_subs',JSON.stringify(subs));
+  }
+  document.getElementById('dayMessage').innerHTML=`<div class="feedback"><b>Мұғалімге жіберілді.</b> ${day.day} күнінің орташа бағасы: ${avg}/10. Жіберілген уақыт: ${submission.submittedDisplay}</div>`;
+  renderDays(); renderTeacher(); updateProgress();
+}
+async function renderTeacher(){
+  let rows=[];
+  try{
+    const r=await fetch('/api/submissions');
+    if(r.ok) rows=await r.json();
+    else throw new Error('server');
+  }catch(e){
+    rows=JSON.parse(localStorage.getItem('qo9_week1_subs')||'[]');
+  }
+  const students=[...new Set(rows.map(x=>x.name))];
+  const avgs=rows.map(x=>Number(x.avg)).filter(Number.isFinite);
+  document.getElementById('tStudents').textContent=students.length;
+  document.getElementById('tSubmissions').textContent=rows.length;
+  document.getElementById('tAverage').textContent=avgs.length?(avgs.reduce((a,b)=>a+b,0)/avgs.length).toFixed(1)+'/10':'—';
+  document.getElementById('teacherRows').innerHTML=rows.length?rows.slice().reverse().map((x,ri)=>{
+    const originalIndex=rows.length-1-ri;
+    const titles=(x.works||[]).map(w=>w.title).join('; ');
+    const scores=(x.works||[]).map(w=>w.review?w.review.score+'/10':'—').join(', ');
+    return `<tr>
+      <td><b>${escapeHtml(x.name)}</b></td>
+      <td>${escapeHtml(x.week||'1-апта')}</td>
+      <td>${escapeHtml(x.day)}</td>
+      <td>${escapeHtml(titles)}</td>
+      <td>${escapeHtml(scores)}</td>
+      <td><b>${escapeHtml(String(x.avg))}/10</b></td>
+      <td>${escapeHtml(x.submittedDisplay||x.time||'')}</td>
+      <td>Paste: ${Number((x.integrity||{}).pasteAttempts||0)}<br>Drop: ${Number((x.integrity||{}).dropAttempts||0)}</td>
+      <td><button class="btn outline" onclick="showSubmission(${originalIndex})">Ашу</button></td>
+    </tr>`;
+  }).join(''):'<tr><td colspan="9">Әзірге мұғалімге жіберілген жұмыс жоқ.</td></tr>';
+}
+function escapeHtml(v){
+  return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function showSubmission(index){
+  const rows=JSON.parse(localStorage.getItem('qo9_week1_subs')||'[]');
+  const x=rows[index]; if(!x)return;
+  const works=(x.works||[]).map(w=>`<div class="work">
+    <h3>${escapeHtml(w.title)}</h3>
+    ${FIELDS.map(f=>`<p><b>${escapeHtml(f.label)}:</b><br>${escapeHtml((w.answers||{})[f.key]||'Жауап жоқ')}</p>`).join('')}
+    ${w.review?renderReview(w.review):''}
+  </div>`).join('');
+  document.getElementById('teacherDetail').innerHTML=`<div class="card">
+    <div class="topline"><h2>${escapeHtml(x.name)} — ${escapeHtml(x.week)} — ${escapeHtml(x.day)}</h2>
+    <button class="btn secondary" onclick="document.getElementById('teacherDetail').innerHTML=''">Жабу</button></div>
+    <p><b>Жіберілген уақыт:</b> ${escapeHtml(x.submittedDisplay||'')}</p>
+    <p><b>Академиялық адалдық журналы:</b> Paste әрекеті — ${Number((x.integrity||{}).pasteAttempts||0)}, Drop әрекеті — ${Number((x.integrity||{}).dropAttempts||0)}</p>${works}</div>`;
+  document.getElementById('teacherDetail').scrollIntoView({behavior:'smooth'});
+}
+async function openTeacher(){
+  const password=prompt('Ұстаз құпиясөзін енгізіңіз:');
+  if(password===null) return;
+  try{
+    const r=await fetch('/api/teacher-login',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({password})
+    });
+    if(!r.ok){ alert('Құпиясөз қате.'); return; }
+  }catch(e){
+    alert('Ұстаз кабинетіне қосылу мүмкін болмады.');
+    return;
+  }
+  await renderTeacher();
+  document.getElementById('teacherCabinet').scrollIntoView({behavior:'smooth'});
+}
+function updateProgress(){
+  if(!userName) return;
+  const d=getData();
+  const total=PLAN.reduce((s,x)=>s+x.works.length,0);
+  let reviewed=0;
+  Object.values(d.reviews||{}).forEach(day=> reviewed += Object.keys(day||{}).length);
+  const pct=Math.round(reviewed/total*100);
+  document.getElementById('progressBar').style.width=pct+'%';
+  document.getElementById('progressText').textContent=`${reviewed}/${total} тақырып бағаланды • ${pct}%`;
+}
+
+const prev=localStorage.getItem('qo9_week1_user');
+if(prev){document.getElementById('studentName').value=prev;}
+</script>
+</body>
+</html>
